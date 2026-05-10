@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var express_1 = require("express");
+var loans_controller_1 = require("../controllers/loans.controller");
+var auth_middleware_1 = require("../middleware/auth.middleware");
+var router = (0, express_1.Router)();
+router.get('/', loans_controller_1.listLoans);
+router.get('/eligible', auth_middleware_1.authenticate, loans_controller_1.getEligibleLoans);
+router.get('/:id', loans_controller_1.getLoanById);
+exports.default = router;

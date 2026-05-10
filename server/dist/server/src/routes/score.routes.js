@@ -1,0 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+var express_1 = require("express");
+var score_controller_1 = require("../controllers/score.controller");
+var auth_middleware_1 = require("../middleware/auth.middleware");
+var router = (0, express_1.Router)();
+router.get('/current', auth_middleware_1.authenticate, score_controller_1.getCurrentScore);
+router.get('/history', auth_middleware_1.authenticate, score_controller_1.getScoreHistory);
+router.get('/benchmark', auth_middleware_1.authenticate, score_controller_1.getBenchmark);
+exports.default = router;
