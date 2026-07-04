@@ -157,11 +157,11 @@ const Dashboard = () => {
   }
 
   const companyIntensity = emissions
-    ? (Number(emissions.total_co2e_scope1) + Number(emissions.total_co2e_scope2)) * 1000 / (company?.annual_revenue_cr || 1)
+    ? (Number(emissions.total_co2e_scope1) + Number(emissions.total_co2e_scope2) + Number(emissions.total_co2e_scope3)) * 1000 / (company?.annual_revenue_cr || 1)
     : 0;
   let trueBenchmarkIntensity = 150;
   if (scoreData && Number(scoreData.energy_score) > 0 && companyIntensity > 0) {
-    const ratio = Math.log(Number(scoreData.energy_score) / 100) / -0.693;
+    const ratio = 2 - (Number(scoreData.energy_score) * 1.8 / 100);
     if (ratio > 0) trueBenchmarkIntensity = companyIntensity / ratio;
   }
 

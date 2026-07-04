@@ -45,7 +45,7 @@ const CarbonInput = () => {
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
 
-  const { register, handleSubmit, formState: { errors } } = useForm<FormData>({
+  const { register, handleSubmit, watch, formState: { errors } } = useForm<FormData>({
     resolver: zodResolver(schema) as any,
     defaultValues: { financial_year: '2024-25' }
   });
@@ -218,19 +218,26 @@ const CarbonInput = () => {
                       { key: 'has_env_policy',        label: 'We have a documented Environmental Policy' },
                       { key: 'has_reduction_targets', label: 'We have set GHG reduction targets' },
                       { key: 'third_party_verified',  label: 'Our data is third-party verified' },
-                    ].map(({ key, label }) => (
-                      <label key={key} className="flex items-center gap-3 cursor-pointer group">
-                        <div className="relative">
-                          <input type="checkbox" {...register(key as any)}
-                                 className="peer w-4 h-4 rounded opacity-0 absolute" />
-                          <div className="w-5 h-5 rounded border flex items-center justify-center transition-all peer-checked:bg-[#5a9e5a] peer-checked:border-[#5a9e5a]"
-                               style={{ border: '1px solid rgba(255,255,255,0.15)', background: 'rgba(255,255,255,0.04)' }}>
-                            <CheckCircle className="w-3 h-3 text-white opacity-0 peer-checked:opacity-100 transition-opacity" />
+                    ].map(({ key, label }) => {
+                      const isChecked = watch(key as any);
+                      return (
+                        <label key={key} className="flex items-center gap-3 cursor-pointer group">
+                          <div className="relative">
+                            <input type="checkbox" {...register(key as any)}
+                                   className="peer w-4 h-4 rounded opacity-0 absolute" />
+                            <div className="w-5 h-5 rounded border flex items-center justify-center transition-all"
+                                 style={{
+                                   border: isChecked ? '1px solid #5a9e5a' : '1px solid rgba(255,255,255,0.15)',
+                                   background: isChecked ? '#5a9e5a' : 'rgba(255,255,255,0.04)'
+                                 }}>
+                              <CheckCircle className="w-3 h-3 text-white transition-opacity"
+                                           style={{ opacity: isChecked ? 1 : 0 }} />
+                            </div>
                           </div>
-                        </div>
-                        <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{label}</span>
-                      </label>
-                    ))}
+                          <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>{label}</span>
+                        </label>
+                      );
+                    })}
                   </div>
                 </motion.div>
               )}
@@ -246,12 +253,12 @@ const CarbonInput = () => {
               ) : <div />}
 
               {step < 5 ? (
-                <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+                <motion.button key="next-step-btn" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                   type="button" onClick={nextStep} className="btn-primary px-6 py-2.5 text-sm">
                   Next Step →
                 </motion.button>
               ) : (
-                <motion.button whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
+                <motion.button key="submit-score-btn" whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
                   type="submit" className="btn-primary px-6 py-2.5 text-sm">
                   Calculate My GreenScore ✓
                 </motion.button>

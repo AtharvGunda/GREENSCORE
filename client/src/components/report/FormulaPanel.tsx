@@ -11,8 +11,8 @@ const FormulaPanel: React.FC<FormulaPanelProps> = ({ score, benchmarkIntensity, 
   const receiptId = (Math.random() * 1000000).toFixed(0).padStart(6, '0');
 
   const rows = [
-    { key: 'company_intensity',  val: `${companyIntensity.toFixed(2)} tCO₂e/₹Cr` },
-    { key: 'sector_benchmark',   val: `${benchmarkIntensity.toFixed(2)} tCO₂e/₹Cr` },
+    { key: 'company_intensity',  val: `${companyIntensity.toFixed(2)} kgCO₂e/₹Cr` },
+    { key: 'sector_benchmark',   val: `${benchmarkIntensity.toFixed(2)} kgCO₂e/₹Cr` },
   ];
 
   return (
@@ -57,7 +57,7 @@ const FormulaPanel: React.FC<FormulaPanelProps> = ({ score, benchmarkIntensity, 
           base formula
         </p>
         <p className="text-xs" style={{ color: '#7bc47b' }}>
-          Score = 100 × exp(−0.693 × (Company / Benchmark))
+          Score = max(0, min(100, 100 × (2 − (Company / Benchmark)) / 1.8))
         </p>
       </div>
 
@@ -68,7 +68,7 @@ const FormulaPanel: React.FC<FormulaPanelProps> = ({ score, benchmarkIntensity, 
           substitution
         </p>
         <p className="text-xs mb-2" style={{ color: 'var(--text-secondary)' }}>
-          Score = 100 × exp(−0.693 × ({companyIntensity.toFixed(2)} / {benchmarkIntensity.toFixed(2)}))
+          Score = max(0, min(100, 100 × (2 − ({companyIntensity.toFixed(2)} / {benchmarkIntensity.toFixed(2)})) / 1.8))
         </p>
         <div className="flex justify-between items-center pt-2"
              style={{ borderTop: '1px solid rgba(90,158,90,0.15)' }}>

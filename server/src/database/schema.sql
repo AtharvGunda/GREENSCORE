@@ -82,8 +82,8 @@ CREATE TABLE loan_offers (
   tenure_years INTEGER,
   eligible_sectors TEXT[],
   rbi_scheme VARCHAR(100),
-  description TEXT,
   apply_url VARCHAR(500),
+  info_url VARCHAR(500),
   is_active BOOLEAN DEFAULT TRUE
 );
 

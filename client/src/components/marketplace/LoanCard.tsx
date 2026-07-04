@@ -106,7 +106,18 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, scoreData, company }) => {
       <div className="grid grid-cols-3 gap-2 mb-4 text-center">
         {[
           {
-            label: 'Rate',
+            label: (
+              <span className="flex items-center justify-center gap-1">
+                Rate
+                {loan.bank === 'IREDA' && (
+                  <a href="https://www.ireda.in/interest-rate-matrix" target="_blank" rel="noopener noreferrer"
+                     className="text-[#7bc47b] hover:text-[#5a9e5a]"
+                     title="View current rates matrix">
+                     ℹ️
+                  </a>
+                )}
+              </span>
+            ),
             val: isEligible
               ? <span style={{ color: '#7bc47b' }}>{calculateDynamicRate(loan, { score: userScore, percentile: userPercentile, sector: company?.sector || '', revenueCr }).toFixed(2)}%</span>
               : <span>{loan.rateMin}–{loan.rateMax}%</span>
@@ -116,10 +127,10 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, scoreData, company }) => {
             val: `₹${isEligible ? calculateDynamicLoanAmountCr(loan, revenueCr).toFixed(1) : loan.maxAmountCr}Cr`
           },
           { label: 'Tenure', val: `${loan.tenureYears}yr` },
-        ].map(({ label, val }) => (
-          <div key={label} className="rounded-xl p-2.5"
+        ].map(({ label, val }, i) => (
+          <div key={i} className="rounded-xl p-2.5"
                style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.07)' }}>
-            <p className="text-[9px] uppercase tracking-wider mb-1 font-semibold" style={{ color: 'var(--text-dim)' }}>{label}</p>
+            <div className="text-[9px] uppercase tracking-wider mb-1 font-semibold flex justify-center" style={{ color: 'var(--text-dim)' }}>{label}</div>
             <p className="text-xs font-bold font-mono-code" style={{ color: 'var(--text-primary)' }}>{val}</p>
           </div>
         ))}
@@ -135,12 +146,20 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, scoreData, company }) => {
 
       {/* Expandable details */}
       <div className="mt-auto pt-4 flex flex-col gap-2">
-        <button onClick={() => setExpanded(!expanded)}
-                className="text-xs flex items-center justify-center gap-1 py-1 transition-colors font-semibold"
-                style={{ color: 'var(--text-dim)' }}>
-          {expanded ? 'Hide Details' : 'View Requirements'}
-          {expanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
-        </button>
+        <div className="flex justify-between items-center px-1">
+          <button onClick={() => setExpanded(!expanded)}
+                  className="text-xs flex items-center gap-1 py-1 transition-colors font-semibold"
+                  style={{ color: 'var(--text-dim)' }}>
+            {expanded ? 'Hide Details' : 'Show Details'}
+            {expanded ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
+          </button>
+          
+          <a href={loan.info_url} target="_blank" rel="noopener noreferrer"
+             className="text-xs flex items-center gap-1 py-1 transition-colors font-semibold hover:text-[#7bc47b]"
+             style={{ color: 'var(--text-dim)' }}>
+            View Requirements ↗
+          </a>
+        </div>
 
         <AnimatePresence>
           {expanded && (
@@ -165,7 +184,7 @@ const LoanCard: React.FC<LoanCardProps> = ({ loan, scoreData, company }) => {
         <div className="flex gap-2">
           {isEligible ? (
             <motion.a
-              href={loan.applyUrl} target="_blank" rel="noreferrer"
+              href={loan.apply_url} target="_blank" rel="noopener noreferrer"
               whileHover={{ scale: 1.02 }} whileTap={{ scale: 0.97 }}
               className="flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-semibold btn-primary"
             >

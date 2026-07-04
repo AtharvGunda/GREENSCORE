@@ -11,30 +11,29 @@ export const calculateEmissions = (record: Partial<EmissionsRecord>, revenue_cr:
   // The Prompt: Table 2: electricity_mwh_per_cr
   // So DB stores MWh per Cr.
   
-  // Calculate Scope 1 (Total Tonnes CO2e = (MWh/Cr * Cr) * factor_per_unit )
-  // Wait, 1 MWh = 1000 kWh. 
-  const electricity_kwh = (record.electricity_mwh_per_cr || 0) * 1000 * revenue_cr;
-  const scope1_elec = (electricity_kwh * EMISSION_FACTORS.scope1.electricity_grid_kwh) / 1000; // in Tonnes
-
+  // Calculate Scope 1 (Direct)
   const diesel_l = (record.diesel_litres_per_cr || 0) * revenue_cr;
-  const scope1_diesel = (diesel_l * EMISSION_FACTORS.scope1.diesel_litre) / 1000;
+  const scope1_diesel = (diesel_l * 2.68) / 1000;
 
   const lpg_kg = (record.lpg_kg_per_cr || 0) * revenue_cr;
-  const scope1_lpg = (lpg_kg * EMISSION_FACTORS.scope1.lpg_kg) / 1000;
+  const scope1_lpg = (lpg_kg * 1.56) / 1000;
 
   const petrol_l = (record.petrol_litres_per_cr || 0) * revenue_cr;
-  const scope1_petrol = (petrol_l * EMISSION_FACTORS.scope1.petrol_litre) / 1000;
+  const scope1_petrol = (petrol_l * 2.31) / 1000;
 
-  const total_co2e_scope1 = scope1_elec + scope1_diesel + scope1_lpg + scope1_petrol;
+  const total_co2e_scope1 = scope1_diesel + scope1_lpg + scope1_petrol;
 
-  // Calculate Scope 2
+  // Calculate Scope 2 (Indirect - electricity in MWh directly multiplied by 0.71, matching Excel formula)
+  const electricity_mwh = (record.electricity_mwh_per_cr || 0) * revenue_cr;
+  const scope2_elec = (electricity_mwh * 0.71) / 1000;
+
   const steam_gj = (record.purchased_steam_gj_per_cr || 0) * revenue_cr;
-  const scope2_steam = (steam_gj * EMISSION_FACTORS.scope2.purchased_steam_gj) / 1000;
-  const total_co2e_scope2 = scope2_steam;
+  const scope2_steam = (steam_gj * 56.1) / 1000;
+  const total_co2e_scope2 = scope2_elec + scope2_steam;
 
-  // Calculate Scope 3
+  // Calculate Scope 3 (Travel - factor 0.089 matching Excel formula)
   const travel_km = (record.business_travel_km_per_cr || 0) * revenue_cr;
-  const scope3_travel = (travel_km * EMISSION_FACTORS.scope3.road_travel_km_per_person) / 1000;
+  const scope3_travel = (travel_km * 0.089) / 1000;
   const total_co2e_scope3 = scope3_travel;
 
   return {
